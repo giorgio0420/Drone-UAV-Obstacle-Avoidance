@@ -1,11 +1,12 @@
 # UAV_Obstacle_Avoidance_Vortex_Field
-##🚁 **Reactive UAV Person-Following with Vortex-Based Obstacle Avoidance**
+
+## 🚁 **Reactive UAV Person-Following with Vortex-Based Obstacle Avoidance**
 
 This project presents the design and validation of a reactive control architecture for a quadrotor UAV performing person-following in cluttered environments.
 
 The UAV does not navigate toward a static goal. Instead, it maintains a desired relative pose with respect to a moving target (Bill), following it at a fixed distance and altitude offset. Obstacle avoidance is handled independently from tracking through a combination of repulsive fields and vortex (tangential) fields, without introducing any classical attractive potential toward a goal.
 
-🧭 Control Philosophy
+## 🧭 **Control Philosophy**
 
 The system is fully reactive and does not rely on global path planning for the UAV. The drone continuously:
 
@@ -15,11 +16,11 @@ The system is fully reactive and does not rely on global path planning for the U
 
 Obstacle avoidance is based on two complementary components:
 
-🔴 Repulsive Field
+## 🔴 **Repulsive Field**
 Pushes the UAV away from obstacles when entering their influence region.
 This guarantees collision avoidance but alone may cause oscillations or local minima.
 
-🌀 Vortex (Tangential) Field
+## 🌀 **Vortex (Tangential) Field**
 Adds a rotational component around obstacles.
 Instead of pushing the drone straight back, it generates a lateral sliding motion that guides the UAV smoothly around obstacles.
 
@@ -30,7 +31,7 @@ F_obs = F_rep + F_vor
 
 This ensures both safety (repulsion) and smooth circumnavigation (vortex).
 
-⚙️ Stabilization and Blending Mechanisms
+## ⚙️ Stabilization and Blending Mechanisms
 
 To avoid instability and aggressive corrections, several heuristic stabilizations are implemented:
 
@@ -42,28 +43,28 @@ To avoid instability and aggressive corrections, several heuristic stabilization
 
 These mechanisms ensure that obstacle avoidance acts as a bounded perturbation, rather than dominating the tracking objective.
 
-🔬 Simulation Scenarios
+## 🔬 Simulation Scenarios
 
 The repository includes four different simulation scenarios, progressively increasing in complexity:
 
-🟢 Scenario 1 – No Obstacles
+### 🟢 Scenario 1 – No Obstacles
 Baseline person-following behavior.
 The UAV maintains the desired relative pose without interference.
 
-🟡 Scenario 2 – Obstacles without Heuristics (Unstable Behavior)
+### 🟡 Scenario 2 – Obstacles without Heuristics (Unstable Behavior)
 Repulsive + vortex fields active but without smoothing/blending.
 The system shows instability, sensitivity to perturbations, and non-repeatable trajectories.
 
-🟠 Scenario 3 – Obstacles with Heuristic Stabilization (Stable Behavior)
+### 🟠 Scenario 3 – Obstacles with Heuristic Stabilization (Stable Behavior)
 Full avoidance strategy with smoothing and blending enabled.
 The UAV smoothly bypasses obstacles and consistently re-aligns behind the target.
 
-🔵 Scenario 4 – Corridor Scenario (Dense Obstacles)
+### 🔵 Scenario 4 – Corridor Scenario (Dense Obstacles)
 Narrow passage with continuous obstacle interaction.
 The UAV performs micro-corrections, maintains bounded tracking error, and safely exits the corridor.
 
 
-📄 Documentation
+## 📄 Documentation
 
 The repository includes:
 
