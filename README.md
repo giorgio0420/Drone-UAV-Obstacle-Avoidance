@@ -1,5 +1,5 @@
 # UAV_Obstacle_Avoidance_Vortex_Field
-🚁 Reactive UAV Person-Following with Vortex-Based Obstacle Avoidance
+##🚁 **Reactive UAV Person-Following with Vortex-Based Obstacle Avoidance**
 
 This project presents the design and validation of a reactive control architecture for a quadrotor UAV performing person-following in cluttered environments.
 
