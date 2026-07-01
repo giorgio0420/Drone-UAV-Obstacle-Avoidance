@@ -46,7 +46,7 @@ The controller is composed of two independent objectives:
 Unlike classical potential field methods, no attractive potential toward a global goal is used. The UAV simply follows the moving target while reacting locally to the environment.
 
 <p align="center">
-  <img src="media/architecture_diagram.jpg" width="850">
+  <img src="media/architecture_diagram.png" width="850">
 </p>
 
 ---
