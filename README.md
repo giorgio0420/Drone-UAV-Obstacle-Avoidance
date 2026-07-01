@@ -136,7 +136,7 @@ Top-view trajectory of the UAV while following the moving target and avoiding su
 
 ---
 
-### Obstacle Avoidance Forces
+### Control Inputs Evolution
 
 <p align="center">
 <img src="media/forces.png" width="800">
