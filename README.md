@@ -1,35 +1,26 @@
-# 🚁 Reactive UAV Obstacle Avoidance using Vortex Vector Fields
+# 🚁 UAV Obstacle Avoidance using Vortex Vector Fields
 
 <p align="center">
   <img src="media/gif.gif" width="900"/>
 </p>
 
 <p align="center">
-<b>Reactive person-following for autonomous quadrotors using repulsive and vortex vector fields with heuristic stabilization.</b>
-</p>
-
-<p align="center">
-
-![CoppeliaSim](https://img.shields.io/badge/CoppeliaSim-Simulation-blue)
-![Lua](https://img.shields.io/badge/Lua-Control-orange)
-![Reactive Navigation](https://img.shields.io/badge/Reactive-Navigation-success)
-![UAV](https://img.shields.io/badge/UAV-Person--Following-green)
-
+<b>Reactive UAV person-following with vortex-based obstacle avoidance in CoppeliaSim.</b>
 </p>
 
 ---
 
-# Overview
+## Overview
 
-This repository presents a **fully reactive control architecture** for autonomous quadrotor navigation in cluttered environments.
+This project presents a **fully reactive control architecture** for autonomous quadrotor person-following in cluttered environments.
 
-Unlike classical navigation frameworks, the UAV **does not navigate toward a fixed global goal**. Instead, it continuously tracks a **virtual target** located behind a moving person while simultaneously avoiding obstacles through the combination of **repulsive** and **vortex vector fields**.
+Instead of navigating toward a fixed global goal, the UAV continuously tracks a **virtual target** located behind a moving person while avoiding surrounding obstacles through a combination of **repulsive** and **vortex vector fields**.
 
-The controller operates entirely in real time and does not require any global path planner or map of the environment.
+The controller operates entirely in real time and does **not require global path planning**, making it suitable for dynamic environments where rapid reactions are essential.
 
 ---
 
-# Key Features
+## Features
 
 - Reactive UAV navigation
 - Autonomous person following
@@ -39,91 +30,56 @@ The controller operates entirely in real time and does not require any global pa
 - Dynamic vortex direction selection
 - Velocity damping
 - Low-pass force filtering
-- Smooth tracking/avoidance blending
+- Smooth blending between tracking and obstacle avoidance
 - Hysteresis-based obstacle activation
-- Automatic CSV logging
-- Real-time simulation in CoppeliaSim
+- Automatic simulation logging
 
 ---
 
-# Control Pipeline
+## Control Strategy
 
-```
-                  Bill
-                   │
-                   ▼
-        Virtual Target Generation
-                   │
-                   ▼
-         Person Following Controller
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-        ▼                     ▼
-Obstacle Detection      Relative Tracking
-        │
-        ▼
-Repulsive Vector Field
-        │
-        ▼
-Vortex Vector Field
-        │
-        ▼
-Velocity Damping
-        │
-        ▼
-Low-pass Filtering
-        │
-        ▼
-Tracking / Avoidance Blending
-        │
-        ▼
-Quadrotor Attitude Controller
-```
+The controller is composed of two independent objectives:
+
+- **Tracking**, which keeps the UAV at a desired relative position behind the moving target.
+- **Obstacle avoidance**, which modifies the tracking command whenever nearby obstacles are detected.
+
+Unlike classical potential field methods, no attractive potential toward a global goal is used. The UAV simply follows the moving target while reacting locally to the environment.
 
 ---
 
-# Obstacle Avoidance Strategy
+### 🔴 Repulsive Field
 
-The avoidance controller combines three complementary actions.
-
-## 🔴 Repulsive Field
-
-A repulsive force pushes the UAV away from nearby obstacles once they enter the influence region.
-
-This guarantees collision avoidance but may generate oscillatory behaviour if used alone.
+The repulsive field pushes the UAV away from nearby obstacles when they enter the safety region, ensuring collision avoidance.
 
 ---
 
-## 🌀 Vortex Field
+### 🌀 Vortex Field
 
-A tangential vector field produces a lateral motion around the obstacle instead of simply pushing the UAV backwards.
+The vortex field introduces a tangential component that guides the UAV smoothly around obstacles instead of forcing it to move directly away from them.
 
-The rotation direction is **computed dynamically** according to the relative position between the obstacle and the virtual target, allowing the UAV to naturally select the most convenient side for bypassing.
-
----
-
-## ⚡ Velocity Damping
-
-An additional damping term reduces aggressive reactions by considering the velocity component directed toward the obstacle.
-
-This improves stability during close interactions.
+The rotation direction is selected dynamically according to the relative geometry between the obstacle and the virtual target, allowing natural obstacle circumnavigation.
 
 ---
 
-The resulting avoidance action is
+### ⚡ Velocity Damping
+
+A damping term reduces aggressive reactions by considering the UAV velocity toward the obstacle, improving stability during close interactions.
+
+---
+
+The final avoidance action is
 
 ```math
 F_{obs}=F_{rep}+F_{vor}+F_{damp}
 ```
 
-which is then filtered and blended with the tracking controller before being sent to the quadrotor.
+which is then filtered and blended with the tracking controller before generating the quadrotor commands.
 
 ---
 
-# Stabilization Heuristics
+## Stabilization Heuristics
 
-Several heuristic mechanisms are introduced to improve robustness and smoothness.
+Several heuristic mechanisms improve robustness and smoothness during navigation:
 
 - Cubic activation of obstacle influence
 - Independent low-pass filtering of repulsive and vortex forces
@@ -132,116 +88,93 @@ Several heuristic mechanisms are introduced to improve robustness and smoothness
 - Hysteresis switching to prevent oscillatory behaviour
 - Limited UAV inclination during aggressive maneuvers
 
-These heuristics allow obstacle avoidance to behave as a bounded perturbation instead of dominating the tracking objective.
+These mechanisms allow obstacle avoidance to act as a bounded correction rather than dominating the tracking objective.
 
 ---
 
-# Simulation Scenarios
+## Simulation Scenarios
 
-| Scenario | Description |
-|-----------|-------------|
-| 🟢 Scenario 1 | Person following without obstacles |
-| 🟡 Scenario 2 | Repulsive + vortex fields without stabilization heuristics |
-| 🟠 Scenario 3 | Full stabilized controller |
-| 🔵 Scenario 4 | Narrow corridor with dense obstacles |
+### 🟢 Scenario 1 — Person Following
+
+Baseline person-following without obstacles.
 
 ---
 
-# Simulation Results
+### 🟡 Scenario 2 — Obstacle Avoidance without Stabilization
 
-## UAV Trajectory
+Repulsive and vortex fields are active, but heuristic stabilization is disabled, resulting in unstable trajectories.
+
+---
+
+### 🟠 Scenario 3 — Stabilized Obstacle Avoidance
+
+Complete controller with filtering, blending and heuristic stabilization enabled.
+
+The UAV smoothly avoids obstacles while maintaining the desired relative position behind the target.
+
+---
+
+### 🔵 Scenario 4 — Corridor Navigation
+
+The UAV traverses a narrow corridor with continuous obstacle interaction, performing smooth local corrections while safely following the target.
+
+---
+
+## Simulation Results
+
+### UAV Trajectory
 
 <p align="center">
 <img src="media/trajectory.png" width="800">
 </p>
 
-The UAV successfully bypasses obstacles while maintaining the desired relative position behind the moving target.
+Top-view trajectory of the UAV while following the moving target and avoiding surrounding obstacles.
 
 ---
 
-## Obstacle Avoidance Forces
+### Obstacle Avoidance Forces
 
 <p align="center">
-<img src="media/force_plot.png" width="800">
+<img src="media/forces.png" width="800">
 </p>
 
-Repulsive and vortex contributions remain smooth thanks to low-pass filtering and blending.
+Repulsive and vortex force components generated by the controller during the simulation.
 
 ---
 
-## Corridor Navigation
+## Documentation
 
-<p align="center">
-<img src="media/corridor.png" width="800">
-</p>
+The repository includes:
 
-The controller performs continuous micro-corrections while maintaining bounded tracking error inside narrow passages.
-
----
-
-# Repository Structure
-
-```
-.
-├── media/
-│   ├── gif.gif
-│   ├── trajectory.png
-│   ├── force_plot.png
-│   └── corridor.png
-│
-├── lua/
-│
-├── scenes/
-│
-├── report/
-│
-├── presentation/
-│
-└── README.md
-```
+- CoppeliaSim simulation scenes
+- Lua controller implementation
+- Technical report
+- Presentation material
+- Parameter configurations for all simulation scenarios
 
 ---
 
-# Automatic Logging
-
-Each simulation automatically exports:
-
-- UAV trajectory
-- Virtual target trajectory
-- Obstacle distance
-- Repulsive forces
-- Vortex forces
-- Attitude commands
-- Obstacle map
-
-The generated CSV files can be directly used for offline analysis and plotting.
-
----
-
-# Technologies
+## Technologies
 
 - CoppeliaSim
 - Lua
 - Reactive Control
 - Vector Fields
-- Quadrotor Dynamics
+- UAV Navigation
 - Obstacle Avoidance
 
 ---
 
-# Future Improvements
+## Future Work
 
-Possible future extensions include:
+Possible extensions include:
 
 - Dynamic obstacle prediction
-- Multi-UAV coordination
 - ROS2 integration
-- Onboard depth camera perception
-- MPC-based tracking controller
-- Real-world UAV deployment
+- Multi-UAV coordination
+- Vision-based perception
+- Real-world UAV implementation
 
 ---
 
-# Author
-
-Developed as part of a research project on **reactive UAV navigation and obstacle avoidance using vortex vector fields**.
+This project demonstrates that combining **repulsive vector fields**, **vortex fields**, and lightweight stabilization heuristics enables robust real-time UAV person-following in cluttered environments without requiring global path planning.
