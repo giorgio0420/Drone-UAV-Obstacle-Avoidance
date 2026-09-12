@@ -171,14 +171,9 @@ The repository includes:
 
 ## Future Work
 
-Possible extensions include:
-
-- Dynamic obstacle prediction
 - ROS2 integration
 - Multi-UAV coordination
 - Vision-based perception
-- Real-world UAV implementation
-
 ---
 
 This project demonstrates that combining **repulsive vector fields**, **vortex fields**, and lightweight stabilization heuristics enables robust real-time UAV person-following in cluttered environments without requiring global path planning.
