@@ -1,7 +1,7 @@
 # 🚁 UAV Obstacle Avoidance using Vortex Vector Fields
 
 <p align="center">
-  <img src="media/gif.gif" width="900"/>
+  <img src="media/preview.gif" width="900"/>
 </p>
 
 <p align="center">
